@@ -13,7 +13,6 @@
     />
   </head>
   <body>
-    <!-- Update Notification Bar -->
     <div
       id="update-bar"
       style="
@@ -52,7 +51,6 @@
       </button>
     </div>
 
-    <!-- Login Modal -->
     <div
       class="modal-overlay"
       id="login-modal"
@@ -137,9 +135,7 @@
     </div>
 
     <div class="app-container">
-      <!-- Header -->
       <header class="top-bar">
-        <!-- Theme Toggle (Right) -->
         <button id="theme-toggle" class="theme-btn" aria-label="تبديل المظهر">
           <svg
             width="24"
@@ -178,14 +174,12 @@
           </svg>
         </button>
 
-        <!-- Logo Text (Center) -->
         <div class="logo">
           <div class="logo-text">
             <h1>متجر ماي فون</h1>
           </div>
         </div>
 
-        <!-- Logo Image (Left) -->
         <div class="logo-image-container">
           <img
             src="https://e.top4top.io/s_3819ougzv1.jpg"
@@ -195,7 +189,6 @@
         </div>
       </header>
 
-      <!-- Search Row -->
       <div class="search-cart-row">
         <div class="search-box">
           <svg
@@ -234,10 +227,8 @@
         </button>
       </div>
 
-      <!-- Banner Slider -->
       <div class="banner-slider" id="banner-slider">
         <div class="banner-track" id="banner-track">
-          <!-- Slide 1 -->
           <div class="banner">
             <div
               class="banner-image-container"
@@ -246,7 +237,6 @@
               "
             ></div>
           </div>
-          <!-- Slide 2 -->
           <div class="banner" style="background: #1e3a8a">
             <div
               class="banner-image-container"
@@ -255,7 +245,6 @@
               "
             ></div>
           </div>
-          <!-- Slide 3 -->
           <div class="banner" style="background: #9d174d">
             <div
               class="banner-image-container"
@@ -273,19 +262,14 @@
         <span class="dot"></span>
       </div>
 
-      <!-- Categories -->
       <div class="categories-wrapper">
         <div class="categories" id="categories-list">
-          <!-- Categories injected via JS -->
-        </div>
+          </div>
       </div>
 
-      <!-- Products Grid -->
       <div class="products-grid" id="products-list">
-        <!-- Products injected via JS -->
-      </div>
+        </div>
 
-      <!-- Account View -->
       <div
         class="account-view"
         id="account-view"
@@ -337,7 +321,6 @@
             border: 1px solid var(--border);
           "
         >
-          <!-- Point 3: Saved Addresses / Locations -->
           <a
             href="#"
             class="account-menu-item"
@@ -380,7 +363,6 @@
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </a>
-          <!-- WhatsApp Contact -->
           <a
             href="https://wa.me/9647817050235"
             target="_blank"
@@ -424,7 +406,6 @@
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </a>
-          <!-- Point 4: Settings -->
           <a
             href="#"
             class="account-menu-item"
@@ -503,7 +484,6 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
       <a href="#" class="nav-item" id="nav-account">
         <div class="icon-wrapper">
@@ -577,7 +557,6 @@
       </a>
     </nav>
 
-    <!-- Cart Modal -->
     <div class="modal-overlay" id="cart-modal">
       <div class="cart-modal-content">
         <div class="cart-header">
@@ -598,8 +577,7 @@
         </div>
 
         <div class="cart-items-container" id="cart-items-container">
-          <!-- Cart items will be rendered here dynamically -->
-        </div>
+          </div>
 
         <div class="cart-summary">
           <div class="summary-line">
@@ -654,7 +632,6 @@
       </div>
     </div>
 
-    <!-- Success Modal -->
     <div class="modal-overlay" id="success-modal">
       <div class="success-modal-content">
         <div class="success-icon-wrapper">
@@ -678,7 +655,6 @@
       </div>
     </div>
 
-    <!-- Address Modal -->
     <div class="modal-overlay" id="address-modal" style="display: none">
       <div
         class="success-modal-content"
@@ -777,7 +753,6 @@
       </div>
     </div>
 
-    <!-- Settings Modal -->
     <div class="modal-overlay" id="settings-modal" style="display: none">
       <div
         class="success-modal-content"
@@ -848,7 +823,6 @@
       </div>
     </div>
 
-    <!-- Install App Modal -->
     <div
       class="modal-overlay"
       id="install-modal"
@@ -911,7 +885,7 @@
       </div>
     </div>
 
-    <script type="module" src="../firebase-init.js"></script>
+    <script type="module" src="firebase-init.js"></script>
     <script src="script.js?v=3"></script>
   </body>
 </html>
