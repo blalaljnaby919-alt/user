@@ -46,20 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function getCategoriesData() {
-  const savedCategories = JSON.parse(localStorage.getItem("categories"));
-  if (savedCategories && savedCategories.length > 0) {
-    return [
-      {
-        id: "all",
-        name: "الكل",
-        image:
-          "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=150&q=80",
-        colorClass: "blue",
-      },
-      ...savedCategories,
-    ];
-  }
-
+  const savedCategories = JSON.parse(localStorage.getItem("categories")) || [];
   return [
     {
       id: "all",
@@ -68,36 +55,7 @@ function getCategoriesData() {
         "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=150&q=80",
       colorClass: "blue",
     },
-    {
-      id: "fashion",
-      name: "أزياء",
-      image: "https://cdn-icons-png.flaticon.com/512/3050/3050238.png",
-      colorClass: "beige",
-    },
-    {
-      id: "electronics",
-      name: "إلكترونيات",
-      image: "https://cdn-icons-png.flaticon.com/512/1252/1252414.png",
-      colorClass: "blue",
-    },
-    {
-      id: "home",
-      name: "منزلية",
-      image: "https://cdn-icons-png.flaticon.com/512/2613/2613063.png",
-      colorClass: "orange",
-    },
-    {
-      id: "beauty",
-      name: "جمال",
-      image: "https://cdn-icons-png.flaticon.com/512/1945/1945656.png",
-      colorClass: "pink",
-    },
-    {
-      id: "books",
-      name: "كتب",
-      image: "https://cdn-icons-png.flaticon.com/512/3145/3145815.png",
-      colorClass: "green",
-    },
+    ...savedCategories,
   ];
 }
 
@@ -117,61 +75,31 @@ async function syncDataWithFirebase() {
         console.log("Fetching new data from Firestore...");
         const productsSnap = await getDocs(collection(db, "products"));
         const catsSnap = await getDocs(collection(db, "categories"));
-        const bannersSnap = await getDocs(collection(db, "banners"));
+        // تم تصحيح مسار سحب البنرات ليتطابق مع الآدمن
+        const bannersDoc = await getDoc(doc(db, "meta", "banners"));
 
         const newProducts = productsSnap.docs.map((d) => ({
           id: d.id,
           ...d.data(),
         }));
         const newCats = catsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        const newBanners = bannersSnap.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        }));
+        
+        let newBanners = [];
+        if (bannersDoc.exists()) {
+            newBanners = bannersDoc.data().data || [];
+        }
 
-        if (newProducts.length > 0) {
-          localStorage.setItem("products", JSON.stringify(newProducts));
-          products = newProducts;
-        }
-        if (newCats.length > 0)
-          localStorage.setItem("categories", JSON.stringify(newCats));
-        if (newBanners.length > 0) {
-          localStorage.setItem("banners", JSON.stringify(newBanners));
-          // Because renderBanners is an IIFE, we might need to manually update banners DOM if we rewrite it but a simple page reload is safer for a major update, or just dynamically recall it
-          location.reload();
-        }
+        // تم إلغاء شرط > 0 لكي يتم تفريغ المتجر إذا قام الآدمن بحذف كل شيء
+        localStorage.setItem("products", JSON.stringify(newProducts));
+        products = newProducts;
+        
+        localStorage.setItem("categories", JSON.stringify(newCats));
+        localStorage.setItem("banners", JSON.stringify(newBanners));
 
         localStorage.setItem("metaVersion", serverVersion.toString());
 
-        if (typeof renderProducts === "function") renderProducts();
-
-        // Re-render categories manually:
-        const categoriesWrapper = document.querySelector(".categories-wrapper");
-        if (categoriesWrapper) {
-          categoriesWrapper.innerHTML = "";
-          const catsData = getCategoriesData();
-          catsData.forEach((cat) => {
-            const btn = document.createElement("button");
-            btn.className = `category-btn ${currentCategory === cat.id ? "active" : ""}`;
-            btn.dataset.id = cat.id;
-            btn.innerHTML = `
-              <div class="cat-icon ${cat.colorClass || ""}">
-                <img src="${cat.image}" alt="${cat.name}">
-              </div>
-              <span>${cat.name}</span>
-            `;
-            btn.addEventListener("click", () => {
-              document
-                .querySelectorAll(".category-btn")
-                .forEach((b) => b.classList.remove("active"));
-              btn.classList.add("active");
-              currentCategory = cat.id;
-              searchQuery = "";
-              renderProducts();
-            });
-            categoriesWrapper.appendChild(btn);
-          });
-        }
+        // إعادة تحميل الصفحة لتطبيق البيانات الجديدة فوراً وشكل نظيف
+        location.reload();
       }
     }
   } catch (e) {
@@ -180,44 +108,8 @@ async function syncDataWithFirebase() {
 }
 window.addEventListener("firebaseReady", syncDataWithFirebase);
 
-let products = JSON.parse(localStorage.getItem("products")) || [
-  {
-    id: 1,
-    name: "خلاطة كهربائي ذكي",
-    price: "25,000 د.ع",
-    image:
-      "https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=300&q=80",
-    rating: 5,
-    category: "home",
-  },
-  {
-    id: 2,
-    name: "ساعة ذكية برو",
-    price: "78,000 د.ع",
-    image:
-      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=300&q=80",
-    rating: 5,
-    category: "electronics",
-  },
-  {
-    id: 3,
-    name: "نظارات شمسية مبيعية",
-    price: "10,000 د.ع",
-    image:
-      "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=300&q=80",
-    rating: 4,
-    category: "fashion",
-  },
-  {
-    id: 4,
-    name: "طقم صيفي قطني",
-    price: "35,000 د.ع",
-    image:
-      "https://images.unsplash.com/photo-1571513722275-4b41940f54b8?auto=format&fit=crop&w=300&q=80",
-    rating: 5,
-    category: "fashion",
-  },
-];
+// تم حذف المنتجات الوهمية لتعتمد فقط على البيانات الحقيقية
+let products = JSON.parse(localStorage.getItem("products")) || [];
 
 let cartItems = [];
 let activeCategory = "all";
@@ -602,22 +494,21 @@ function initCartModal() {
 function initSlider() {
   const track = document.getElementById("banner-track");
   const dotsContainer = document.getElementById("banner-dots");
+  const slider = document.getElementById("banner-slider");
+  
   if (!track || !dotsContainer) return;
 
-  let banners = JSON.parse(localStorage.getItem("banners")) || [
-    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&w=800&q=80",
-  ];
-
-  if (banners.length === 0) {
-    banners = [
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
-    ]; // Fallback if user deleted all
-  }
+  let banners = JSON.parse(localStorage.getItem("banners")) || [];
 
   track.innerHTML = "";
   dotsContainer.innerHTML = "";
+
+  if (banners.length === 0) {
+    if(slider) slider.style.display = "none";
+    return;
+  } else {
+    if(slider) slider.style.display = "";
+  }
 
   banners.forEach((bannerUrl, index) => {
     const slide = document.createElement("div");
@@ -730,7 +621,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (productsListEl) productsListEl.style.display = showMain ? "" : "none";
     if (categoriesWrapperEl)
       categoriesWrapperEl.style.display = showMain ? "" : "none";
-    if (bannerSliderEl) bannerSliderEl.style.display = showMain ? "" : "none";
+    if (bannerSliderEl && JSON.parse(localStorage.getItem("banners")||"[]").length > 0) bannerSliderEl.style.display = showMain ? "" : "none";
     if (bannerDotsEl) bannerDotsEl.style.display = showMain ? "" : "none";
     if (searchRowEl) searchRowEl.style.display = showMain ? "" : "none";
 
